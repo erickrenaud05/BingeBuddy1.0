@@ -322,7 +322,26 @@ $(document).ready(function(){
     document.addEventListener(
         "loaded",
         (e) => {
+            var counter = 0;
+            for (myMovie of movies) {
+                movieTitles[counter] = myMovie.title;
+                counter++;
+            }
+            
             createMovieCards(randomizeBasedOnFilter());
+
+            $('#srchBtn').click(function(event){
+                event.preventDefault();
+                displayCardDetails($('#tags').val())
+            })
+
+            $( function() {
+                $( function() {
+                    $( "#tags" ).autocomplete({
+                    source: movieTitles
+                    });
+                } );
+            } );
 
             $('#btn-randomize-filter').click(function(event){
                 var movieMatchSelect = false;
