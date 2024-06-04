@@ -85,6 +85,45 @@ Array.prototype.diff = function(arr2) {
     return ret;
 };
 
+function displayCardDetails(movieName){
+    const movieDetailArea = $('#movieCardDetails');
+        movieDetailArea.empty();
+        for (let movie of movies) {
+            if(movie.title === movieName) {             
+                const movieTitle = $('<h2>').text(movie.title).addClass('my-2');
+                const movieDescription = $('<p>').text(movie.description);
+
+                const movieExtraInfoContainer = $('<div>').addClass('container row');
+                const movieThumbnail = $('<img>').attr('src', movie.image).addClass('col-sm-5 col-12');
+
+                const movieAllOtherInfo = $('<div>').addClass('col-sm-4 col-12');
+
+                const movieGenres = $('<div>');
+                const movieGenresTitle = $('<h3>').text('Genres: ');
+
+                const releaseArea = $('<div>');
+                const releaseAreaTitle = $('<h3>').text('Release Date: ');
+                const releaseDate = $('<h4>').text(movie.year).addClass('py-1');
+
+                movieGenres.append(movieGenresTitle);
+                for(let genres of movie.genre) {
+                   const genre = $('<h4>').text(genres).addClass('py-1');
+                   movieGenres.append(genre);
+                }
+
+                const movieRatingArea = $('<div>').addClass('py-1');
+                const movieRatingTitle = $('<h3>').text('Rating: ');
+                const movieRating = $('<h4>').text(movie.rating + '/10');
+
+                releaseArea.append(releaseAreaTitle, releaseDate);
+                movieRatingArea.append(movieRatingTitle, movieRating);
+                movieAllOtherInfo.append(movieGenres, movieRatingArea, releaseArea);
+                movieExtraInfoContainer.append(movieThumbnail, movieAllOtherInfo);
+                movieDetailArea.append(movieTitle, movieDescription, movieExtraInfoContainer);
+            }
+        }    
+}
+
 $(document).ready(function(){
     document.addEventListener(
         "loaded",
