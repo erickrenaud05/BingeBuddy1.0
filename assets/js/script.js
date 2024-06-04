@@ -1,8 +1,8 @@
-const movieTitles = [];
-var movies = JSON.parse(localStorage.getItem('top100'));
 const event = new Event("loaded");
 const movieCardArea = $('#movieCardArea');
 const inputList = $('.form-check-input');
+const locationBtn = $('#btn-location');
+const movieTitles = [];
 const genres = [];
 const state = {
     releaseCheck1: false,
@@ -11,6 +11,15 @@ const state = {
     rateCheck2: false
 };
 const searchFilters = [state, genres];
+var movies = JSON.parse(localStorage.getItem('top100'));
+var myLocation = JSON.parse(localStorage.getItem('location'))
+
+if(!myLocation) {
+    locationBtn.text('Add location');
+    myLocation = {};
+} else {
+    locationBtn.text('Change Location');
+}
 
 function displayMovieCards(movie) {
     
@@ -157,6 +166,56 @@ function randomizeBasedOnState() {
     return movieMatch;
 }
 
+function locationSelect() {
+    //two inputs from modal and set to local storage as location
+
+    const countryName = $('#countryName').val();
+    const cityName = $('#cityName').val();
+    const countryCode = getCountryCode(countryName);
+
+    if(!countryCode) {
+        alert('Ensure that your spelling is correct, if spelling is correct, unfortunately, we do not offer randomize by weather in your area yet.')
+        return 2;
+    }
+
+    if(!countryName || !cityName) {
+        alert('location not updated, please fill out both section');
+        return 1;
+    }
+
+    fetchCityInfo(cityName, countryCode);
+}
+
+function fetchCityInfo(cityName, countryCode) {
+    fetch(`https://api.openweathermap.org/data/2.5/forecast?q=${cityName},${countryCode}&units=metric&appid=f33bf20affa316ba4d95961d5e07550c`)
+    .then(function(response) {
+        if(response.status === 200) {
+            return response.json()
+            .then(function(data){
+                myLocation = data;
+                localStorage.setItem('location', JSON.stringify(myLocation));
+                return 0
+            })
+        } else {
+            return 1
+        }   
+    }).then(function(err){
+        var myModalEl = $('#location-modal');
+        var modal = bootstrap.Modal.getInstance(myModalEl);
+        if(err === 0){
+            alert('location successfully updated');
+            $('#closeBtn').text('close');
+            modal.hide();
+            return 0;
+        } else if (err === 1) {
+            alert('location not successfully updated. Please ensure city name and country are spelt correctly.');
+            modal.hide();
+            return 1;
+        }
+    })
+    
+}
+
 $(document).ready(function(){
     document.addEventListener(
         "loaded",
@@ -177,6 +236,10 @@ $(document).ready(function(){
                 } else {
                     createMovieCards(randomizeBasedOnFilter());
                 }
+            })
+            
+            $('#submitBtn').click(function(event) {
+                locationSelect();
             })
 
             inputList.click(function(event){
