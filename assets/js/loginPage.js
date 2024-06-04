@@ -48,3 +48,17 @@ $('#formSubmit').on('click', function(event){
     window.location.replace('blogPage.html');
     return 0;
 });
+
+$('#login').on('click', function(event){
+    const username = $('#username').val();
+    if(!username) {
+        alert('Please enter username');
+        return;
+    }
+
+    if(username === account.username) {
+        window.location.replace('blogPage.html');
+    } else {
+        alert('Please enter username used to create account.');
+    }
+});
