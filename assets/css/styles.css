@@ -1,0 +1,24 @@
+.navbar {
+    background: linear-gradient(to right, #264653, #457b9d);
+}
+
+.navbar-brand {
+    color: #fec89a;
+}
+
+.navbar-brand:hover {
+    color: #fec89a;
+    transform: scale(90%);
+}
+
+.btn-search {
+    background-color: #e76f51;
+}
+
+.btn-randomize{
+    background-color: #8ECAE6;
+}
+
+.loginPageLinks {
+    all: unset;
+}
