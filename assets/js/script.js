@@ -124,11 +124,60 @@ function displayCardDetails(movieName){
         }    
 }
 
+function randomizeBasedOnState() {
+    const movieMatch = [];
+    for (let movie of movies) {
+        const genres = movie.genre
+        if(genres.diff(searchFilters[1]).length === searchFilters[1].length) {
+            movieMatch.push(movie);
+        } 
+    }
+
+    if(movieMatch.length === 0) {
+        alert('The genres you have selected do not match any movie. Heres 5 movies based on selected order!')
+        for (let i = 0; i < 100; i++) {     
+            movieMatch.push(movies[i])
+        }
+    } 
+
+    if(state.releaseCheck1) {
+        movieMatch.sort((a, b) => b.year - a.year);
+    } else if(state.releaseCheck2) {
+        movieMatch.sort((a, b) => a.year - b.year);
+    } else if(state.rateCheck1) {
+        movieMatch.sort((a, b) => b.rating - a.rating)
+    } else if(state.rateCheck2) {
+        movieMatch.sort((a, b) => a.rating - b.rating)
+    }
+
+    if(movieMatch.length > 5) {
+        movieMatch.length = 5;
+    }
+  
+    return movieMatch;
+}
+
 $(document).ready(function(){
     document.addEventListener(
         "loaded",
         (e) => {
             createMovieCards(randomizeBasedOnFilter());
+
+            $('#btn-randomize-filter').click(function(event){
+                var movieMatchSelect = false;
+
+                for (var property in state) {
+                    if (state[property]) {
+                        movieMatchSelect = true;
+                    } 
+                }
+
+                if(movieMatchSelect){
+                    createMovieCards(randomizeBasedOnState());
+                } else {
+                    createMovieCards(randomizeBasedOnFilter());
+                }
+            })
 
             inputList.click(function(event){
                 for(let input of inputList) {
