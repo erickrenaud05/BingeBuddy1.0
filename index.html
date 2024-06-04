@@ -159,6 +159,32 @@
                     <button type="button" class="btn rounded-1 my-2 col-8 ms-auto me-auto btn-randomize" id="btn-randomize-weather">Randomize <span class="fw-light opacity-75">(by weather)</span></button>
                     <button type="button" data-bs-toggle="modal" data-bs-target="#location-modal" class="btn rounded-1 my-2 col-6 ms-auto me-auto btn-randomize" id="btn-location"> </button> 
                     <button type="button" class="btn rounded-1 my-2 col-8 ms-auto me-auto btn-randomize"><a href="loginPage.html" class="loginPageLinks">BuddyReviews</a></button>
+                    <div class="modal fade" id="location-modal" tabindex="-1" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h1 class="modal-title fs-5" id="exampleModalLabel">Enter Location</h1>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <form id="locationForm">
+                                        <div class="mb-3">
+                                            <label for="countryName" class="col-form-label">Country</label>
+                                            <input type="text" class="form-control" id="countryName">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="cityName" class="col-form-label">City</label>
+                                            <input class="form-control" id="cityName"></input>
+                                        </div>
+                                    </form>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="closeBtn">Cancel</button>
+                                    <button type="button" class="btn btn-primary" id="submitBtn">Complete</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </aside>
         </div>
