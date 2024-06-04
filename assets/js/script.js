@@ -94,6 +94,10 @@ Array.prototype.diff = function(arr2) {
     return ret;
 };
 
+$('#design').on('click', function(event) {
+    window.location.replace('../index.html');
+})
+
 function displayCardDetails(movieName){
     const movieDetailArea = $('#movieCardDetails');
         movieDetailArea.empty();
