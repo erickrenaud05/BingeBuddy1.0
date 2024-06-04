@@ -62,3 +62,7 @@ $('#login').on('click', function(event){
         alert('Please enter username used to create account.');
     }
 });
+
+$('#recovery').on('click', function(event) {
+    alert(`Your username is: ${account.username}`);
+})
