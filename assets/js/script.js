@@ -216,6 +216,108 @@ function fetchCityInfo(cityName, countryCode) {
     
 }
 
+function getCountryCode(countryName) {
+    if(countryName.toLowerCase() === 'canada') {
+        return 'CA'
+    }
+
+    if(countryName.toLowerCase() === 'china') {
+        return 'CN'
+    } 
+
+    if(countryName.toLowerCase() === 'usa' || countryName.toLowerCase() === 'united states of america' || countryName.toLowerCase() === 'america') {
+        return 'US'
+    } 
+
+    return null;
+}
+
+function randomizeBasedOnWeather() {
+    const genreList = genreListBasedOnWeather(retrieveWeatherId());
+    const movieMatch = [];
+    const tmpMovieMatch = [];
+    for (let movie of movies) {
+        const genres = movie.genre
+        if(genres.diff(genreList).length > 0) {
+            movieMatch.push(movie);
+        } 
+    }
+
+    if (movieMatch.length > 5) {      
+        const randomNumbers = [];
+        for (let i = 0; i < 5; i++) {    
+            tmpMovieMatch.push(movieMatch[randomizeSelection(movieMatch.length, randomNumbers)])
+        }
+        return tmpMovieMatch;   
+    }
+    
+    return movieMatch;
+}
+
+function genreListBasedOnWeather(id) {
+    const genreSelection = [];
+    if (id >= 500 && id < 531) {
+        //rain
+        genreSelection.push('Romance');
+        genreSelection.push('Fantasy');
+        genreSelection.push('Drama');
+    } else if (id >= 801 && id < 805) {
+        //clouds
+        if(id === 801) {
+            genreSelection.push('Family');
+            genreSelection.push('Comedy');
+        } else if(id === 802 || id == 803) {
+            genreSelection.push('Animation');
+            genreSelection.push('History');
+            genreSelection.push('Mystery');
+        } else if(id === 804) {
+            genreSelection.push('Mystery');
+            genreSelection.push('War');
+            genreSelection.push('Crime');
+        } 
+    } else if (id >= 200 && id < 233) {
+        //thunder
+        genreSelection.push('Horror');
+        genreSelection.push('Thriller');
+        genreSelection.push('Drama');
+    } else if (id === 800) {
+        genreSelection.push('Family');
+        genreSelection.push('Comedy');
+    } 
+
+    return genreSelection;
+}
+
+function retrieveWeatherId() { 
+    if(myLocation) {
+        if(dayjs().diff(dayjs(myLocation.list[0].dt_txt), 'h') < 0){
+            return myLocation.list[0].weather[0].id;
+        } else {
+            fetch(`https://api.openweathermap.org/data/2.5/forecast?q=${myLocation.city.name},${myLocation.city.country}&units=metric&appid=f33bf20affa316ba4d95961d5e07550c`)
+                .then(function(response) {
+                    if(response.status === 200) {
+                        return response.json()
+                        .then(function(data){
+                            myLocation = data;
+                            localStorage.setItem('location', JSON.stringify(myLocation));
+                            return 0
+                        })
+                    } else {
+                        return 1
+                     }
+                }).then(function(errCode){
+                    if(errCode === 0) {
+                        console.log('good');
+                        createMovieCards(randomizeBasedOnWeather())
+                    } else {
+                        console.log('Im very unsure why this happened')
+                    }
+                })   
+            
+        }
+    }
+}
+
 $(document).ready(function(){
     document.addEventListener(
         "loaded",
@@ -240,6 +342,10 @@ $(document).ready(function(){
             
             $('#submitBtn').click(function(event) {
                 locationSelect();
+            })
+
+            $('#btn-randomize-weather').click(function(event){
+                createMovieCards(randomizeBasedOnWeather());
             })
 
             inputList.click(function(event){
