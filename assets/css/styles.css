@@ -22,3 +22,21 @@
 .loginPageLinks {
     all: unset;
 }
+
+.card-body:hover {
+    transform: scale(90%);
+}
+.card-title {
+    pointer-events: none;
+}
+.movieCard {
+    background-repeat: no-repeat;
+    background-size: contain;
+    background-position: center;
+}
+
+.ui-autocomplete {
+    max-height: 100px;
+    overflow-y: hidden;
+    overflow-x: hidden;
+}
