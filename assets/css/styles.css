@@ -14,3 +14,11 @@
 .btn-search {
     background-color: #e76f51;
 }
+
+.btn-randomize{
+    background-color: #8ECAE6;
+}
+
+.loginPageLinks {
+    all: unset;
+}
