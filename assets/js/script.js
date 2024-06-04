@@ -2,28 +2,15 @@ const movieTitles = [];
 var movies = JSON.parse(localStorage.getItem('top100'));
 const event = new Event("loaded");
 const movieCardArea = $('#movieCardArea');
-
-if(!movies){
-    const url = 'https://imdb-top-100-movies.p.rapidapi.com/';
-    const options = {
-        method: 'GET',
-        headers: {
-            'x-rapidapi-key': '0868ce6b49msh450c6495f98bfedp12ac44jsn4f7ca80908e2',
-            'x-rapidapi-host': 'imdb-top-100-movies.p.rapidapi.com'
-        }
-    };
-    fetch(url, options)
-        .then(function(response){
-            return response.json()
-        })
-        .then(function(data){
-            localStorage.setItem('top100', JSON.stringify(data));
-            movies = JSON.parse(localStorage.getItem('top100'));
-            document.dispatchEvent(event);
-        })
-} else {
-    document.dispatchEvent(event);
-}
+const inputList = $('.form-check-input');
+const genres = [];
+const state = {
+    releaseCheck1: false,
+    releaseCheck2: false,
+    rateCheck1: false,
+    rateCheck2: false
+};
+const searchFilters = [state, genres];
 
 function displayMovieCards(movie) {
     
@@ -50,12 +37,119 @@ function createMovieCards(randomizeSelection) {
     }
 }
 
+function randomizeBasedOnFilter() {
+    const movieMatch = [];
+    const tmpMovieMatch = [];
+    for (let movie of movies) {
+        const genres = movie.genre
+        if(genres.diff(searchFilters[1]).length === searchFilters[1].length) {
+            movieMatch.push(movie);
+        } 
+    }
+
+    if(movieMatch.length === 0) {
+        const randomNumbers = [];
+        for (let i = 0; i < 5; i++) {     
+            movieMatch.push(movies[randomizeSelection(100, randomNumbers)])
+        }
+        alert('The genres you have selected do not match any movies. Heres 5 random movies!')
+    } else if (movieMatch.length > 5) {      
+        const randomNumbers = [];
+        for (let i = 0; i < 5; i++) {    
+            tmpMovieMatch.push(movieMatch[randomizeSelection(movieMatch.length, randomNumbers)])
+        }
+        return tmpMovieMatch;
+    }
+    return movieMatch;
+}
+
+function randomizeSelection(length, randomNumbers) {
+    var x = Math.floor(Math.random()*length);
+    while(randomNumbers.includes(x)) {
+        x = Math.floor(Math.random()*length);
+    }
+    randomNumbers.push(x);
+    return x;
+}
+
+// This section of code is from jeremy anwsering a question on stackOverflow
+Array.prototype.diff = function(arr2) {
+    var ret = [];
+    this.sort();
+    arr2.sort();
+    for(var i = 0; i < this.length; i += 1) {
+        if(arr2.indexOf(this[i]) > -1){
+            ret.push(this[i]);
+        }
+    }
+    return ret;
+};
+
 $(document).ready(function(){
     document.addEventListener(
         "loaded",
         (e) => {
-            
+            createMovieCards(randomizeBasedOnFilter());
+
+            inputList.click(function(event){
+                for(let input of inputList) {
+                    if (input.id === event.target.id)
+                        if(input.checked){
+                            if(input.id === 'releaseCheck1' || input.id === 'releaseCheck2' || input.id === 'rateCheck1' || input.id === 'rateCheck2') {
+                                for (var property in state) {            
+                                    if(property !== input.id) {
+                                        state[property] = false;
+                                    } else {
+                                        state[property] = true;
+                                    }
+                                }
+                            } else {
+                                searchFilters[1].push(input.id);
+                            }
+                        } else {
+                            if(input.id === 'releaseCheck1' || input.id === 'releaseCheck2' || input.id === 'rateCheck1' || input.id === 'rateCheck2') {
+                                for (var property in state) {            
+                                    state[property] = false;
+                                }
+                            }
+                            for (let filter of searchFilters[1]){
+                                if(filter === input.id) {
+                                    searchFilters[1].splice(searchFilters[1].indexOf(filter), 1);
+                                }
+                            }
+                        }
+                    }
+                for (var input of inputList) {
+                    for (var property in state) {
+                        if (input.id === property) {
+                            input.checked = state[property]
+                        }
+                    }
+                }
+            })
         },
         false,
     );
+
+    if(!movies){
+        const url = 'https://imdb-top-100-movies.p.rapidapi.com/';
+        const options = {
+            method: 'GET',
+            headers: {
+                'x-rapidapi-key': '0868ce6b49msh450c6495f98bfedp12ac44jsn4f7ca80908e2',
+                'x-rapidapi-host': 'imdb-top-100-movies.p.rapidapi.com'
+            }
+        };
+        fetch(url, options)
+            .then(function(response){
+                return response.json()
+            })
+            .then(function(data){
+                localStorage.setItem('top100', JSON.stringify(data));
+                movies = JSON.parse(localStorage.getItem('top100'));
+                document.dispatchEvent(event);
+            })
+    } else {
+        document.dispatchEvent(event);
+    }
 })
