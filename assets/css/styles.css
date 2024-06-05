@@ -40,3 +40,15 @@
     overflow-y: hidden;
     overflow-x: hidden;
 }
+
+#design {
+    border: 0;
+    min-width: 20vw;
+    min-height: 20vw; 
+    background: linear-gradient(to bottom, #264653, #457B9D, #8ECAE6, #A8DADB, #FEC89A, #E66F51);
+    transition: all 0.3s ease-in-out 0s;
+}
+
+#design:hover {
+    background-image: linear-gradient(to top, #264653, #457B9D, #8ECAE6, #A8DADB, #FEC89A, #E66F51);
+}
