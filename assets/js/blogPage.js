@@ -1,7 +1,14 @@
+var myModal = $('#reviewModal');
+const modal = new bootstrap.Modal(myModal);
+
 var reviewList = JSON.parse(localStorage.getItem('reviews'));
 if(!reviewList) {
     reviewList = [];
 }
+
+$( "#movieTitle" ).autocomplete({
+    source: movieTitles
+});
 
 function createReview(details) {
     const cardEL = $('<div>').addClass('card m-2');
@@ -35,3 +42,56 @@ function createReview(details) {
         }
     });
 }
+
+function displayReviews() {
+    for (var reviews of reviewList) {
+        createReview(reviews);
+    }
+}
+
+function capitalizeFirstLetter(string) {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+}
+
+$(document).ready(function(event){
+    displayReviews();
+    const account = JSON.parse(localStorage.getItem('account'));
+
+    $('#username').text(capitalizeFirstLetter(account.name));
+    $('#reviewSubmitBtn').on('click', function(){
+        const newReview = {
+            title: '',
+            description: '',
+            author: ''
+        };
+
+        newReview.title = $('#movieTitle').val();
+        newReview.description = $('#description').val();
+        newReview.author = capitalizeFirstLetter(account.name); //username pulled from localStorage
+        for (let property in newReview) {
+            if(!newReview[property]){
+                console.log(newReview[property])
+                alert('Please fill out entire form');
+                return 1
+            } 
+        }
+        for(var review of reviewList){
+            if(review.title ===  newReview.title){
+                alert(`You already have a review for ${newReview.title}, please enter a new title, or delete the old review`);
+                return 2;
+            }
+        }
+        $('#movieTitle').val('');
+        $('#description').val('');
+        modal.toggle()
+        reviewList.push(newReview);
+        localStorage.setItem('reviews', JSON.stringify(reviewList));
+        createReview(newReview);
+    });
+
+    $('#blogCloseBtn').on('click', function(event) {
+        $('#movieTitle').val('');
+        $('#description').val('');
+    });
+
+})
